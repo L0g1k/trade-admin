@@ -1,4 +1,5 @@
 while :
     do
-      jjs -fx -cp target/classes:target/dependency/commons-exec-1.2.jar src/main/javascript/admin.js
+      jjs -fx -cp target/classes:target/dependency/* src/main/javascript/admin.js
+      sleep 1
     done
