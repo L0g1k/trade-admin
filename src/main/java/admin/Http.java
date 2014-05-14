@@ -62,10 +62,10 @@ public class Http {
 
 	public static void main(String[] args) {
 		try {
-			boolean reachable = Http.isReachable("localhost:9001");
-			System.out.println(reachable);
-			//String post = Http.post("localhost:9001", "plus500page.debug");
-			//System.out.println(post);
+			//boolean reachable = Http.isReachable("localhost:9001");
+			//System.out.println(reachable);
+			String post = Http.post("10.0.1.3:9001", "plus500page.debug()");
+			System.out.println(post);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

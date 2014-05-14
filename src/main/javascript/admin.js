@@ -21,8 +21,7 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 		var button = new Button();
 		var label = new Label();
 		label.text = "Data collector status  ";
-		var dataCollectorHealthy = dataCollectorRunning()
-				&& dataCollectorIsLogging();
+		var dataCollectorHealthy = dataCollectorIsLogging();
 		var dataCollectorStatus = statusLight(dataCollectorHealthy ? Color.GREEN
 				: Color.RED);
 
@@ -67,6 +66,7 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 	}
 
 	function dataCollectorRunning() {
+		print("Checking data collector")
 		try {
 			return commandSender
 					.ssh("/home/ubuntu/plus500/bin/datacollector.sh status") == "1";
@@ -102,13 +102,18 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 
 		function getTimeString(input) {
 			var values = input.split(":");
+			if (values.length == 2) {
+				values.unshift(0);
+			}
 			return values[0] + " hours, " + values[1] + " minutes";
 		}
 		try {
-			var time = commandSender.ssh('ps -o etime="" -p 25575').trim();
+			var time = commandSender
+					.ssh('ps -o etime="" -p $(pidof phantomjs)').trim();
 			if (time.indexOf("-") != -1) {
 				// eg "1-08:38:53"
 				var tokens = time.split("-");
+
 				var days = parseInt(tokens[0])
 				var dayString = days > 1 ? "days" : "day"
 				return days + " " + dayString + " " + getTimeString(tokens[1]);
@@ -130,6 +135,7 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 	}
 
 	function dataCollectorIsLogging() {
+		print("Checking data collector actual data")
 		var kairos = "http://" + host + ":8080/api/v1/datapoints/query";
 		var query = {
 			"metrics" : [ {
@@ -139,17 +145,17 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 					"name" : "avg",
 					"align_sampling" : true,
 					"sampling" : {
-						"value" : "1",
-						"unit" : "hours"
+						"value" : "10",
+						"unit" : "seconds"
 					}
 				} ]
 			} ],
 			"cache_time" : 0,
 			"start_relative" : {
-				"value" : "1",
-				"unit" : "days"
+				"value" : "5",
+				"unit" : "minutes"
 			}
-		};
+		}
 		var response = Http.post(kairos, JSON.stringify(query), 10000);
 		try {
 			var object = JSON.parse(response);
