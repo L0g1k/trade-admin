@@ -10,6 +10,8 @@ var host = "10.0.1.3";
 var port = 9001;
 var commandSender = new CommandSender("ubuntu@" + host)
 
+load("src/main/javascript/StatusLight.js");
+
 with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 	function start(primaryStage) {
 		primaryStage.title = "Trade server administration";
@@ -127,11 +129,9 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 	}
 
 	function statusLight(color) {
-		var status = new Canvas(25, 25);
-		var gc = status.getGraphicsContext2D();
-		gc.setFill(color);
-		gc.fillOval(0, 0, 25, 25);
-		return status;
+		var light = new StatusLight(25, 25);
+		light.setColour(color);
+		return light.toNode();
 	}
 
 	function dataCollectorIsLogging() {
