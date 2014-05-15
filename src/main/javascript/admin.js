@@ -24,14 +24,11 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 		var button = new Button();
 		var label = new Label();
 		label.text = "Data collector status  ";
-		var dataCollectorHealthy = statusMonitor.dataCollectorIsLogging();
-		var dataCollectorStatus = statusLight(dataCollectorHealthy ? Color.GREEN
-				: Color.RED);
+		var dataCollectorStatus = statusLight();
 
 		var label2 = new Label();
 		label2.text = "Trade server status  ";
-		var tradeServerStatus = statusLight(statusMonitor.tradeServerRunning() ? Color.GREEN
-				: Color.RED);
+		var tradeServerStatus = statusLight();
 
 		button.text = "Start trade server";
 		button.onAction = function() {
@@ -49,14 +46,13 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 
 		var dataCollectorRam = new HBox();
 		dataCollectorRam.children.add(new Label("Data collector RAM:"));
-		dataCollectorRam.children.add(new Label(statusMonitor
-				.dataCollectorMemory()
-				+ " MB"));
+		var memoryLabel = new Label();
+		dataCollectorRam.children.add(memoryLabel);
 
 		var dataCollectorTimeRow = new HBox();
 		dataCollectorTimeRow.children.add(new Label("Data collector time:"));
-		dataCollectorTimeRow.children.add(new Label(statusMonitor
-				.dataCollectorTime()));
+		var timeLabel = new Label();
+		dataCollectorTimeRow.children.add(timeLabel);
 
 		var tradeServer = new HBox();
 		tradeServer.children.add(label2);
@@ -69,11 +65,20 @@ with (new JavaImporter(javafx.scene.layout, javafx.scene.control)) {
 		// rows.children.add(button);
 		primaryStage.scene = new Scene(root, 400, 250);
 		primaryStage.show();
+		statusMonitor.debug();
+		statusMonitor.init(function(results) {
+
+			dataCollectorStatus
+					.setColour(results.dataCollectorIsLogging ? Color.GREEN
+							: Color.RED())
+			memoryLabel.text = dataCollectorMemory;
+			timeLabel.text = dataCollectorTime;
+
+		})
 	}
 
-	function statusLight(color) {
+	function statusLight() {
 		var light = new StatusLight(25, 25);
-		light.setColour(color);
 		return light.toNode();
 	}
 

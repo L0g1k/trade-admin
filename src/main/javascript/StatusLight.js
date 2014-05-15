@@ -4,10 +4,10 @@ function StatusLight(width, height) {
 }
 
 StatusLight.prototype = {
-	setColour : function(color) {
-		this.gc.setFill(color);
-		this.gc.fillOval(0, 0, 25, 25);
 
+	setColour : function(color) {
+		this.gc.setFill(color || Color.GRAY);
+		this.gc.fillOval(0, 0, 25, 25);
 	},
 
 	toNode : function() {

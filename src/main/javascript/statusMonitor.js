@@ -1,8 +1,35 @@
+load("src/main/javascript/timers.js")
+
 function StatusMonitor() {
 
 }
 
 StatusMonitor.prototype = {
+
+	init : function(callback) {
+		this.callback = callback;
+		setInterval(function() {
+			callback({
+				dataCollectorRunning : dataCollectorRunning(),
+				dataCollectorMemory : dataCollectorMemory(),
+				tradeServerRunning : tradeServerRunning(),
+				dataCollectorTime : dataCollectorTime(),
+				dataCollectorIsLogging : dataCollectorIsLogging()
+			})
+		}.bind(this), 5000);
+	},
+
+	update : function() {
+		if (this.callback) {
+			this.callback({
+				dataCollectorRunning : dataCollectorRunning(),
+				dataCollectorMemory : dataCollectorMemory(),
+				tradeServerRunning : tradeServerRunning(),
+				dataCollectorTime : dataCollectorTime(),
+				dataCollectorIsLogging : dataCollectorIsLogging()
+			})
+		}
+	},
 	dataCollectorRunning : function() {
 		print("Checking data collector")
 		try {
